@@ -3,7 +3,10 @@
 
   Bad Apple!! buts its on the Serial plotter
 
-  (Original Version with the TEENSY 4.1) (Needs SD card to store video data)
+  (Needs SD card to store video data)
+
+  Works on a Teensy 4.1 (uses its built-in SD slot) and on any other board with an SPI SD
+  card module. If the board is not a Teensy 4.1 it defaults to an SPI SD module on SD_CS_PIN.
 
   by Jason S
 
@@ -21,10 +24,15 @@
 #include <Arduino.h>
 #include <SD.h>
 
+//Why did I make ts :( I'm wasting my time
 
 
 #define VID_HEIGHT 37 //Change this if used a different height than the provided video files
 #define VID_WIDTH 50 //Has to stay to 50 due to Serial plotter only display 50 past values (unless its some legacy Serial plotter that has a diff value)
+
+//SD card chip-select pin used when NOT on a Teensy 4.1 (generic SPI SD module)
+//Change this to match your wiring
+#define SD_CS_PIN 5
 
 
 float frameInterval;
@@ -39,9 +47,14 @@ File video;
 void setup() {
   Serial.begin(230400);
 
-  if (!(SD.begin(BUILTIN_SDCARD))) {
+#if defined(ARDUINO_TEENSY41)
+  bool sdGood = SD.begin(BUILTIN_SDCARD);
+#else
+  bool sdGood = SD.begin(SD_CS_PIN);       
+#endif
+  if (!sdGood) {
     Serial.println("SD Card initialization failed!");
-    while (1); 
+    while (1);
   }
 
   video = SD.open("badapple.plot", FILE_READ);

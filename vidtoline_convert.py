@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Required packages: opencv-python, numpy
 
 import sys
@@ -12,7 +11,7 @@ OUTPUT_FILE = "badapple.plot"
 WIDTH = 50
 HEIGHT = 37
 FPS = 12.0
-INVERT = False
+INVERT = True
 THRESHOLD = 128
 
 
